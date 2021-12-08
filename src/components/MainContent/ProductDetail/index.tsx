@@ -121,6 +121,16 @@ const Description = styled.div`
     list-style: none;
   }
 
+  .buttons {
+    border: 1px solid #f1f1f1;
+    padding: 5px 0 5px 25px;
+    margin-top: 20px;
+    margin-bottom: 0;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+  }
+
   .items {
     font-size: 0.8rem;
   }
@@ -175,6 +185,7 @@ const ProductDetail: React.FC = () => {
 
   const [book, setBook] = useState<BookType | null>(null);
   const [rated, setRated] = useState<Boolean>(false);
+  const [yourRating, setYourRating] = useState<string>("1");
 
   const history = useHistory();
   const location = useLocation();
@@ -213,13 +224,11 @@ const ProductDetail: React.FC = () => {
           }
         })
         .then((bookfetch) => {
-          setRated(bookfetch.userRating === null);
+          setRated(bookfetch.userRating !== null);
           setBook(bookfetch);
           
-          if (rated && book) {
-            toast.error( "change rating");
-            ratingstring = (<p>Your rating is {book.userRating}</p>)
-
+          if (rated) {
+            setYourRating(bookfetch.userRating);
           }
         })
         .catch((err) => {console.log(err)});
@@ -244,9 +253,43 @@ const ProductDetail: React.FC = () => {
     }
 
   
-  }, [bookID])
+  }, [bookID, setBook, setRated])
 
 
+
+  const sendRating = (rate: string) => {
+    const fd = new FormData();
+    fd.append("rating", rate);
+    return fetch(
+      BOOK_LINK + bookID + "/rating",
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+        body: fd,
+      })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw Error("Cant change rating!");
+        }
+      })
+      .then(() => {
+        history.go(0)
+      })
+      .catch((err) => {console.log(err)});
+    }
+    
+    const onSubmitHandler = () => {
+      sendRating(yourRating);
+  }
+  
+  const onRemoveHandler = () => {
+    sendRating("-1");
+    history.go(0)
+  }
 
   if (book) {
 
@@ -291,17 +334,40 @@ const ProductDetail: React.FC = () => {
               <>
                 <div className="descr">
                   { !rated? ratingstring : (<p>Your rating is {book.userRating}</p>)}
-                  { !rated? ratingcourage : ratingcourage2} <input type="number" /> / 5
+                  { !rated? ratingcourage : ratingcourage2} 
+                  <input 
+                    type="number"
+                    min="1"
+                    max="5"
+                    style={{width: 50}}
+                    value={yourRating}
+                    onChange={(e) => {setYourRating(e.target.value)}}
+                  /> / 5
                     
                 </div>
 
-                <div className="descr">
-                  { rated?
-                    (<p>Want to rate again? </p>) : 
-                    (<p>Your rating is {book.userRating}</p>)
+                <div className="buttons">
+                  <div>
+                      <Button
+                        onClick={onSubmitHandler}
+                        variant="contained"
+                      >Submit Rating</Button> 
+                  </div>
+                  {
+                    rated? (
+                      <div>
+                        <Button
+                          style={{
+                            backgroundColor: "#e65353",
+                          }}
+                          onClick={onRemoveHandler}
+                          variant="contained"
+                        >Remove Rating</Button>
+                      </div>
+                    ) : (<></>)
                   }
-                    
                 </div>
+
               </>
             )}
 

@@ -73,7 +73,7 @@ const SignIn: React.FC = () => {
     <>
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Đăng nhập</title>
+        <title>Login</title>
       </Helmet>
       {isLoadding && <Loading />}
       <Container component="main" maxWidth="xs">
@@ -93,7 +93,7 @@ const SignIn: React.FC = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Đăng nhập vào BRS
+            Login To BRS
           </Typography>
           <Box
             component="form"
@@ -158,7 +158,7 @@ const SignIn: React.FC = () => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Đăng nhập
+              Login
             </Button>
             <Grid container direction="column" alignItems="center">
               {/* <Grid item xs>

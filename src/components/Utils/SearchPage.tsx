@@ -32,7 +32,6 @@ const SearchPage: React.FC = () => {
   const [books, setBooks] = useState<BookType[]>([]);
   useEffect(() => {
     (async () => {
-      toast.error("call " + keyword);
       fetch(
         SEARCH_LINK + `?pageNum=${pageNum}&pageSize=${pageSize}&keyword=${keyword}`
       )
