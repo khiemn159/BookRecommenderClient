@@ -3,8 +3,14 @@ import {
   ProductType,
 } from "../state/reducers/repositoriesReducer";
 
-
 const PROFILE_LINK = "http://localhost:8080/api/v1/user/profile";
+export const LOGIN_LINK = `http://localhost:8080/api/v1/auth/login`;
+export const BOOK_LINK = `http://localhost:8080/api/v1/books/`; //+ id
+export const SIGNUP_LINK = `http://localhost:8080/api/v1/user/signup`;
+export const UPDATE_PROFILE_LINK = `http://localhost:8080/api/v1/user/profile/update`;
+export const POPULAR_LINK = `http://localhost:8080/api/v1/books/popular`;
+export const RECOMMENDATION_LINK = `http://localhost:8080/api/v1/books/recommendation`;
+export const SEARCH_LINK = `http://localhost:8080/api/v1/books/search`;
 
 const userconversion = (user: any) => {
   return {
@@ -37,23 +43,6 @@ export const getUserWhenReload = async (token: any) => {
   return userconversion(user);
 }
 
-
-
-export const FormatAmount = (amount: number) => {
-  let result = "";
-  let counter = 0;
-  while (amount !== 0) {
-    if (counter === 3) {
-      result = "." + result;
-      counter = 0;
-    }
-    result = (amount % 10) + result;
-    amount = Math.floor(amount / 10);
-    counter++;
-  }
-
-  return result + "đ";
-};
 
 export const getAllProducts = (categories: CategoryType[]) => {
   const result: ProductType[] = [];
@@ -99,8 +88,3 @@ export const getCategoriesOfMenuItem = (categories: CategoryType[]) => {
   return result;
 };
 
-export const LOGIN_LINK = `http://localhost:8080/api/v1/auth/login`;
-export const BOOK_LINK = `http://localhost:8080/api/v1/books/`; //+ id
-export const SIGNUP_LINK = `http://localhost:8080/api/v1/user/signup`;
-export const UPDATE_PROFILE_LINK = `http://localhost:8080/api/v1/user/profile/update`;
-export const POPULAR_LINK = `http://localhost:8080/api/v1/books/popular`;

@@ -4,6 +4,18 @@
   margin-left: -5px;
   margin-right: -5px;
 }
+.home-filter-search {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  border-radius: 2px;
+  background-color: #ededed;
+  color: #555555;
+  font-size: 0.875rem;
+}
+
 .home-filter {
   display: flex;
   align-items: center;

@@ -6,6 +6,7 @@ import {
   ItemOrderType,
   OrderHistoryType,
   CommentType,
+  BookType,
 } from "../reducers/repositoriesReducer";
 import { ActionType } from "../action-types";
 
@@ -20,6 +21,14 @@ export type Action =
   | {
       type: ActionType.LOAD_USER;
       payload: UserType;
+    }
+  | {
+      type: ActionType.LOAD_POPULAR_BOOK;
+      payload: [BookType[]];
+    }
+  | {
+      type: ActionType.LOAD_RECOMMENDATION_BOOK;
+      payload: [BookType[]];
     }
   | {
       type: ActionType.LOAD_PRODUCT;

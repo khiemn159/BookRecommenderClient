@@ -25,7 +25,7 @@ const SearchInput: React.FC = () => {
             <input
               type="text"
               className="header__search-input"
-              placeholder="Nhập để tìm kiếm sản phẩm"
+              placeholder="Search"
               value={searchInput}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -53,7 +53,7 @@ const SearchInput: React.FC = () => {
             {productsShow.length > 0 && (
               <div className="header__search-history">
                 <h3 className="header__search-history-heading">
-                  Recommend for you
+                  Results
                 </h3>
                 <ul className="header__search-history-list">
                   {(productsShow.length >= 5

@@ -9,7 +9,7 @@ import Footer from "./components/Footer";
 import MainContent from "./components/MainContent";
 import ProductDetail from "./components/MainContent/ProductDetail";
 import { useTypedSelector } from "./hooks/useTypedSelector";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
@@ -25,7 +25,8 @@ import {
 import Loading from "./components/Utils/Loading";
 import MyProfile from "./components/MyProfile";
 // import Admin from "./components/Admin";
-import { getCategoriesOfMenuItem, getProductsOfCategory, getUserWhenReload } from "./helper";
+import { getCategoriesOfMenuItem, getProductsOfCategory, getUserWhenReload, POPULAR_LINK, RECOMMENDATION_LINK } from "./helper";
+import SearchPage from "./components/Utils/SearchPage";
 
 
 const Layout = styled.div`
@@ -41,87 +42,65 @@ function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
+  const pageNum = 0;
+  const pageSize = 100;
+
+
+
   const location = useLocation<{ from: { pathname: string } }>();
+  useEffect(() => {
+    if (isLoggedIn) {
+      (async () => {
+        fetch(
+          POPULAR_LINK + `?pageNum=${pageNum}&pageSize=${pageSize}`
+        )
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            return res.json().then((data) => {
+              let errorMessage = "Không lấy được dữ liệu popular!";
+              throw new Error(errorMessage);
+            });
+            
+          }
+        })
+        .then((bookfetch) => {
+          dispatch({type: ActionType.LOAD_POPULAR_BOOK, payload: [bookfetch.content]});
+        })
+        .catch((err) => { toast.error(err.message); });
+      })();
 
-  // useEffect(() => {
-  //   setIsLoading(true);
-  //   (async () => {
-  //     let products: ProductType[] = [];
-  //     let categories: CategoryType[] = [];
-  //     let menuItems: MenuItemType[] = [];
-      
-  //     const snapshotProducts = await Products.get();
+      (async () => {
+        fetch(
+          RECOMMENDATION_LINK + `?pageNum=${pageNum}&pageSize=${pageSize}`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            }
+          }
+        )
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            return res.json().then((data) => {
+              let errorMessage = "Không lấy được dữ liệu recommendation!";
+              throw new Error(errorMessage);
+            });
+            
+          }
+        })
+        .then((bookfetch) => {
+          dispatch({type: ActionType.LOAD_RECOMMENDATION_BOOK, payload: [bookfetch.content]});
+        })
+        .catch((err) => {
+          toast.error(err.message);
+        });
+      })();
+    }
+  }, [setIsLoading, isLoggedIn, dispatch, token]);
 
-  //     snapshotProducts.forEach((doc) => {
-  //       if (!doc.data().isDeleted && doc.data().quantityRemaining > 0)
-  //         products.push({
-  //           ProductID: doc.id,
-  //           CategoryID: doc.data().CategoryID,
-  //           Name: doc.data().Name,
-  //           Price: doc.data().Price,
-  //           Discount: doc.data().Discount,
-  //           Description: doc.data().Description,
-  //           image: doc.data().Image,
-  //           Producer: doc.data().Producer,
-  //           Source: doc.data().Source,
-  //           Star: doc.data().Star,
-  //           comments: doc.data().comments,
-  //           quantityRemaining: doc.data().quantityRemaining,
-  //           Sold: doc.data().Sold,
-  //           isDeleted: false,
-  //         });
-  //     });
-
-  //     const listProductsOfCategory = getProductsOfCategory(products);
-
-  //     const snapshotCategories = await Categories.get();
-  //     snapshotCategories.forEach((doc) => {
-  //       categories.push({
-  //         categoryId: doc.id,
-  //         menuItemId: doc.data().MenuItemID,
-  //         name: doc.data().Name,
-  //         isDeleted: doc.data().isDeleted,
-  //         products: listProductsOfCategory[doc.id],
-  //         Promotion: doc.data().Promotion,
-  //       });
-  //     });
-      
-  //     const listCategoriesOfMenuItem = getCategoriesOfMenuItem(categories);
-      
-  //     const snapshotMenuItems = await MenuItems.get();
-  //     snapshotMenuItems.forEach((doc) => {
-  //       menuItems.push({
-  //         menuItemId: doc.id,
-  //         name: doc.data().Name,
-  //         isDeleted: doc.data().isDeleted,
-  //         categories: listCategoriesOfMenuItem[doc.id],
-  //       });
-  //     });
-  //     console.log("category", menuItems);
-
-  //     dispatch({
-  //       type: ActionType.LOAD_PRODUCT,
-  //       payload: [products, categories, menuItems],
-  //     });
-  //     setIsLoading(false);
-  //   })();
-
-
-
-  //   if (localStorage.getItem("token")) {
-  //     const decoded: any = jwt_decode(token);
-  //     const expirationTime = decoded.exp * 1000 - 60000;
-
-  //     if (Date.now() >= expirationTime) {
-  //       dispatch({ type: ActionType.LOGOUT });
-  //     } else {
-  //       (async () => {
-  //         const user = await getUserWhenReload(localStorage.getItem("token"));
-  //         dispatch({ type: ActionType.LOAD_USER, payload: user });
-  //       })();
-  //     }
-  //   }
-  // }, [setIsLoading, dispatch, token]);
 
   return (
     <>
@@ -146,9 +125,9 @@ function App() {
             )}
             {isLoggedIn && !location.state && <Redirect to="/" />}
           </Route>
-          {/* <Route exact path="/menu-item/:menuItemID" component={MainContent} /> */}
+          <Route exact path="/menu-item/:menuItemID" component={MainContent} />
           <Route exact path="/product-detail/:id" component={ProductDetail} />
-          {/* <Route exact path="/search" component={SearchPage} /> */}
+          <Route exact path="/search" component={SearchPage} />
           <Route exact
             path={[
               "/my/account",

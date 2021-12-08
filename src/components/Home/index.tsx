@@ -1,44 +1,24 @@
 import { useEffect, useState } from "react";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
-import { getAllProducts, POPULAR_LINK } from "../../helper";
+import { POPULAR_LINK } from "../../helper";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-// import "./index.css";
+import "./index.css";
 import HomeProduct from "../MainContent/HomeProduct";
 import { URLSearchParams } from "url";
 import { BookType } from "../../state/reducers/repositoriesReducer";
+import SearchInput from "../Header/SearchInput";
 
 const HomePage: React.FC = () => {
-  // const menuItems = useTypedSelector((state) => state.repositories.menuItems);
-  const [popularItems, setPopularItems] = useState<Array<BookType>>([]);
+  const { popularBook, recommendationBook } = useTypedSelector((state) => state.repositories);
   const { isLoggedIn } = useTypedSelector((state) => state.repositories);
+
+  let popularItems = popularBook.slice(0, 5);
+  let recommendationItems = recommendationBook.slice(0, 5);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      fetch(
-        POPULAR_LINK + "?pageNum=0&pageSize=5"
-      )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            let errorMessage = "Không lấy được dữ liệu popular!";
-            throw new Error(errorMessage);
-          });
-          
-        }
-      })
-      .then((bookfetch) => {
-        setPopularItems(bookfetch.content);
-      })
-      .catch((err) => {console.log(err)});
-    })();
-  }, [popularItems])
 
   return (
     <>
@@ -47,11 +27,16 @@ const HomePage: React.FC = () => {
         <title>BRS</title>
       </Helmet>
 
+      <div className="home-filter-search">
+        <SearchInput />
+      </div>
+
+
       {isLoggedIn && (
         <>
           <div className="home-filter">
             <Link
-              to={`/menu-item/popular`}
+              to={`/menu-item/recommendation`}
               className="home-filter__btn btn btn--primary"
             >
               Recommend
@@ -59,7 +44,7 @@ const HomePage: React.FC = () => {
           </div>
           <div className="home-product">
             <div className="grid__row">
-              {popularItems.map((item) => (
+              {recommendationItems.map((item) => (
                 <HomeProduct key={item.id} data={item} />
               ))}
             </div>

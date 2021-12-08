@@ -4,52 +4,62 @@ import { useTypedSelector } from "../../hooks/useTypedSelector";
 import "./index.css";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import { ProductType } from "../../state/reducers/repositoriesReducer";
+import { BookType, ProductType } from "../../state/reducers/repositoriesReducer";
 import { Helmet } from "react-helmet";
 import HomeFilter from "../MainContent/HomeFilter";
 import HomeProduct from "../MainContent/HomeProduct";
+import { SEARCH_LINK } from "../../helper";
+import { toast } from "react-toastify";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const SearchPage: React.FC = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const keyword = query.get("keyword") || "";
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const products = useTypedSelector((state) => state.repositories.products);
   const [page, setPage] = useState(1);
-  const [filter, setFilter] = useState("new");
   const history = useHistory();
 
-  const onChangeFilterHandler = (e: string) => {
-    setFilter(e);
-  };
+  const pageNum=0;
+  const pageSize=100;
 
-  const productsChoice = products.filter((el) =>
-    el.Name?.toLowerCase().includes(keyword)
-  );
+  const [books, setBooks] = useState<BookType[]>([]);
+  useEffect(() => {
+    (async () => {
+      toast.error("call " + keyword);
+      fetch(
+        SEARCH_LINK + `?pageNum=${pageNum}&pageSize=${pageSize}&keyword=${keyword}`
+      )
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage = "cant find search result!";
+            throw new Error(errorMessage);
+          });
+          
+        }
+      })
+      .then((bookfetch) => {
+        setBooks(bookfetch.content);
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      });
+    }) ();
+  }, []);
 
-  if (filter === "lowToHigh") {
-    productsChoice.sort((a: ProductType, b: ProductType) =>
-      a.Price > b.Price ? 1 : b.Price > a.Price ? -1 : 0
-    );
-  } else if (filter === "highToLow") {
-    productsChoice.sort((a: ProductType, b: ProductType) =>
-      a.Price > b.Price ? -1 : b.Price > a.Price ? 1 : 0
-    );
-  } else if (filter === "new") {
-    productsChoice.sort((a: ProductType, b: ProductType) =>
-      +a.ProductID > +b.ProductID ? -1 : +b.ProductID > +a.ProductID ? 1 : 0
-    );
-  } else {
-    productsChoice.sort((a: ProductType, b: ProductType) =>
-      a.Sold > b.Sold ? -1 : b.Sold > a.Sold ? 1 : 0
-    );
-  }
 
-  const sizeProducts = productsChoice.length;
+  const sizeProducts = books.length;
+
+  const onSearchHandler = () => {}
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -71,29 +81,61 @@ const SearchPage: React.FC = () => {
           fontSize: "1.2rem",
         }}
       >
-        <span>Kết quả cho từ khóa tìm kiếm: </span>
+        <span>Search result for: </span>
         <span style={{ fontWeight: "bold", color: "var(--primary-color)" }}>
           {keyword}
         </span>
       </div>
-      {productsChoice.length > 0 ? (
+      {books.length > 0 ? (
         <div className="app__container">
           <Helmet>
             <meta charSet="utf-8" />
-            <title>Tìm kiếm</title>
+            <title>Search</title>
           </Helmet>
+          <div className="home-filter-search">
+            <div className="header-with-search">
+              <div className="header__search">
+                <div className="header__search-input-wrap">
+                  <input
+                    type="text"
+                    className="header__search-input"
+                    placeholder="Search"
+                    value={searchInput}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        if (searchInput) {
+                          e.currentTarget.blur();
+                          onSearchHandler();
+                        }
+                      }
+                    }}
+                  />
+                  
+                </div>
+                <button
+                  className="header__search-btn"
+                  disabled={!searchInput}
+                  onClick={() => {
+                    if (searchInput) onSearchHandler();
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faSearch}
+                    className="header__search-btn-icon"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
           <div className="grid">
             <div className="grid__row app-content">
-              <HomeFilter
-                filter={filter}
-                onChangeFilterHandler={onChangeFilterHandler}
-              />
+
               <div className="home-product">
                 <div className="grid__row">
-                  {productsChoice
+                  {books
                     .slice(15 * (page - 1), 15 * page)
                     .map((item) => (
-                      <HomeProduct key={item.ProductID} data={item} />
+                      <HomeProduct key={item.id} data={item} />
                     ))}
                 </div>
               </div>
@@ -132,10 +174,10 @@ const SearchPage: React.FC = () => {
           }}
         >
           <p style={{ marginTop: 0, fontSize: "1.8rem" }}>
-            Không tìm thấy kết quả nào
+            Cannot find any results
           </p>
           <span style={{ fontWeight: 300 }}>
-            Hãy thử sử dụng các từ khóa chung chung hơn
+            Please try other keywords
           </span>
         </div>
       )}

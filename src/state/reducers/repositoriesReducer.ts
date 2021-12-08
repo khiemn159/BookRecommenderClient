@@ -102,6 +102,8 @@ interface RepositoriesState {
   user: UserType;
   productsOrder: ItemOrderType[];
   orderHistory: OrderHistoryType[];
+  popularBook: BookType[];
+  recommendationBook: BookType[];
 }
 
 const initialState = {
@@ -121,6 +123,8 @@ const initialState = {
   },
   productsOrder: [],
   orderHistory: [],
+  popularBook: [],
+  recommendationBook: [],
 };
 
 const reducer = (
@@ -151,6 +155,18 @@ const reducer = (
       return {
         ...state,
         user: action.payload,
+      };
+
+    case ActionType.LOAD_POPULAR_BOOK:
+      return {
+        ...state,
+        popularBook: action.payload[0],
+      };
+
+    case ActionType.LOAD_RECOMMENDATION_BOOK:
+      return {
+        ...state,
+        recommendationBook: action.payload[0],
       };
 
     case ActionType.LOAD_PRODUCT:
