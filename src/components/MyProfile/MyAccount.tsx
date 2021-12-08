@@ -99,14 +99,14 @@ const MyAccount: React.FC = () => {
           return res.json();
         } else {
           return res.json().then((data) => {
-            let errorMessage = "Có lỗi xảy ra, lưu thất bại";
+            let errorMessage = "Something went wrong, error saving!";
             throw new Error(errorMessage);
           });
         }
       })
       .then((data) => {
         setIsLoading(false);
-        toast.success("Cập nhật thành công!");
+        toast.success("Saving success!");
         
       })
       .catch((err) => {
@@ -115,7 +115,7 @@ const MyAccount: React.FC = () => {
       });
   };
 
-  return user.name ? (
+  return user.id ? (
     <div
       style={{
         display: "flex",
@@ -222,13 +222,14 @@ const MyAccount: React.FC = () => {
             setCountryInput(e.target.value);
           }}
         />
+
         <Button
           variant="contained"
           component="span"
           onClick={onUpdateUser}
 
         >
-          Lưu
+          Save
         </Button>
       </div>
 

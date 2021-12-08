@@ -191,6 +191,10 @@ const ProductDetail: React.FC = () => {
     <div style={{ padding: 64, fontSize: "2rem" }}>Sách không tồn tại</div>
   );
 
+  let ratingstring = (<p>You haven't rate this book yet! Leave you rating now!</p>)
+  let ratingcourage = (<>Leave your rating! </>);
+  let ratingcourage2 = (<>Change your rating: </>)
+
   useEffect(() => {
     if (isLoggedIn) {
       fetch(
@@ -211,6 +215,12 @@ const ProductDetail: React.FC = () => {
         .then((bookfetch) => {
           setRated(bookfetch.userRating === null);
           setBook(bookfetch);
+          
+          if (rated && book) {
+            toast.error( "change rating");
+            ratingstring = (<p>Your rating is {book.userRating}</p>)
+
+          }
         })
         .catch((err) => {console.log(err)});
 
@@ -231,8 +241,8 @@ const ProductDetail: React.FC = () => {
           setBook(bookfetch);
         })
         .catch((err) => {console.log(err)});
-
     }
+
   
   }, [bookID])
 
@@ -245,7 +255,7 @@ const ProductDetail: React.FC = () => {
         <Container>
           <Helmet>
             <meta charSet="utf-8" />
-            <title>{book.title ?? "Sách"}</title>
+            <title>{book.title ?? "Book"}</title>
           </Helmet>
           
           <div style={{ width: "300px", marginLeft:"50px", marginRight:"50px", border: "1px solid #ccc" }}>
@@ -255,7 +265,7 @@ const ProductDetail: React.FC = () => {
             <p className="product-name">{book.title}</p>
 
             <div className="promotion-more">
-              <strong>Thông tin sách</strong>
+              <strong>Book Information</strong>
             </div>
             <div className="descr">
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -280,12 +290,8 @@ const ProductDetail: React.FC = () => {
             {isLoggedIn && (
               <>
                 <div className="descr">
-                  { rated?
-                    (<p>You haven't rate this book yet! Leave you rating now!</p>) : 
-                    (<p>Your rating is {book.userRating}</p>)
-                  }
-
-                  <p></p>
+                  { !rated? ratingstring : (<p>Your rating is {book.userRating}</p>)}
+                  { !rated? ratingcourage : ratingcourage2} <input type="number" /> / 5
                     
                 </div>
 

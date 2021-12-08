@@ -59,7 +59,10 @@ const SearchPage: React.FC = () => {
 
   const sizeProducts = books.length;
 
-  const onSearchHandler = () => {}
+  const onSearchHandler = () => {
+    history.push(`/search?keyword=${searchInput}`);
+    history.go(0);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -108,6 +111,9 @@ const SearchPage: React.FC = () => {
                           onSearchHandler();
                         }
                       }
+                    }}
+                    onChange={(e) => {
+                      setSearchInput(e.target.value);
                     }}
                   />
                   

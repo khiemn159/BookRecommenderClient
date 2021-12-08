@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import {
   CategoryType,
   ProductType,
@@ -13,14 +14,14 @@ export const RECOMMENDATION_LINK = `http://localhost:8080/api/v1/books/recommend
 export const SEARCH_LINK = `http://localhost:8080/api/v1/books/search`;
 
 const userconversion = (user: any) => {
-  return {
+  return user? {
     id: user.username,
     name: user.name,
     email: user.mail,
     country: user.country,
     age: user.age,
     avatar: user.avatar
-  }
+  } : null;
 }
 
 export const getUserWhenReload = async (token: any) => {
@@ -38,7 +39,7 @@ export const getUserWhenReload = async (token: any) => {
       } else {
         return null;
       }
-    });
+    });  
 
   return userconversion(user);
 }

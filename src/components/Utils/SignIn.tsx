@@ -53,11 +53,14 @@ const SignIn: React.FC = () => {
         return getUserWhenReload(data.token);
       })
       .then((user) => {
+        if (!user) toast("err!");
         dispatch({ type: ActionType.LOAD_USER, payload: user });
         setIsLoadding(false);
-  
+
         history.go(0);
         history.push("/");
+
+  
       })
       .catch((err) => {
         setIsLoadding(false);

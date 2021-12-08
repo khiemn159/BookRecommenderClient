@@ -13,18 +13,20 @@ import { ActionType } from "../../state/action-types";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
 import { Avatar } from "@mui/material";
+import { getUserWhenReload } from "../../helper";
 
 const HeaderOptions: React.FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [btnIsHighlighted, setBtnIsHighlighted] = useState(false);
-  const { isLoggedIn, user, productsOrder } = useTypedSelector(
+  const { isLoggedIn, user, productsOrder, token } = useTypedSelector(
     (state) => state.repositories
   );
   const menuItems = useTypedSelector((state) => state.repositories.menuItems);
 
   const btnClasses = `button link ${btnIsHighlighted ? "bump" : ""}`;
 
+  if (user) console.log(user)
   useEffect(() => {
     if (productsOrder.length === 0) {
       return;
@@ -40,18 +42,28 @@ const HeaderOptions: React.FC = () => {
     };
   }, [productsOrder]);
 
+  useEffect(() => {
+    if (!user.id) {
+      (async()=>{
+        let user = await getUserWhenReload(token);
+        dispatch({ type: ActionType.LOAD_USER, payload: user });
+
+      })();
+    }
+  },[user, token]);
+
   return (
     <div className="cssmenu">
 
       {/***********************************************************/}
       {!isLoggedIn && (
         <Link className="link separate" to="/register">
-          Đăng ký
+          Sign Up
         </Link>
       )}
       {!isLoggedIn && (
         <Link className="link separate" to="/login">
-          Đăng nhập
+          Log In
         </Link>
       )}
 
@@ -63,11 +75,11 @@ const HeaderOptions: React.FC = () => {
           }`}
         >
           <Avatar
-            alt={user.name}
+            alt={user.id}
             src={user.avatar}
             style={{ marginRight: "8px", width: "30px", height: "30px" }}
           />
-          {user.name}
+          {user.id}
           <ul className="select-category__list">
             {user.email === "admin@gmail.com" ? (
               <>
@@ -91,7 +103,7 @@ const HeaderOptions: React.FC = () => {
               <>
                 <li className="select-input__item">
                   <Link to="/my/account" className="select-input__link">
-                    Tài khoản của tôi
+                    My Account
                   </Link>
                 </li>
                 {/* <li className="select-input__item">
@@ -120,7 +132,7 @@ const HeaderOptions: React.FC = () => {
                   backgroundColor: "var(--white-color)",
                 }}
               >
-                Đăng xuất
+                Log out
                 <FontAwesomeIcon
                   icon={faSignOutAlt}
                   style={{ marginLeft: "8px" }}

@@ -45,32 +45,31 @@ function App() {
   const pageNum = 0;
   const pageSize = 100;
 
-
-
   const location = useLocation<{ from: { pathname: string } }>();
   useEffect(() => {
+    
+    (async () => {
+      fetch(
+        POPULAR_LINK + `?pageNum=${pageNum}&pageSize=${pageSize}`
+      )
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage = "cant fetch popular!";
+            throw new Error(errorMessage);
+          });
+          
+        }
+      })
+      .then((bookfetch) => {
+        dispatch({type: ActionType.LOAD_POPULAR_BOOK, payload: [bookfetch.content]});
+      })
+      .catch((err) => { toast.error(err.message); });
+    })();
+    
     if (isLoggedIn) {
-      (async () => {
-        fetch(
-          POPULAR_LINK + `?pageNum=${pageNum}&pageSize=${pageSize}`
-        )
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            return res.json().then((data) => {
-              let errorMessage = "Không lấy được dữ liệu popular!";
-              throw new Error(errorMessage);
-            });
-            
-          }
-        })
-        .then((bookfetch) => {
-          dispatch({type: ActionType.LOAD_POPULAR_BOOK, payload: [bookfetch.content]});
-        })
-        .catch((err) => { toast.error(err.message); });
-      })();
-
       (async () => {
         fetch(
           RECOMMENDATION_LINK + `?pageNum=${pageNum}&pageSize=${pageSize}`,
