@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { useTypedSelector } from "../../hooks/useTypedSelector";
 import "./index.css";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import { BookType, ProductType } from "../../state/reducers/repositoriesReducer";
+import { BookType } from "../../state/reducers/repositoriesReducer";
 import { Helmet } from "react-helmet";
-import HomeFilter from "../MainContent/HomeFilter";
 import HomeProduct from "../MainContent/HomeProduct";
 import { SEARCH_LINK } from "../../helper";
 import { toast } from "react-toastify";

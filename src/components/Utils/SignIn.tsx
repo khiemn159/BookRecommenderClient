@@ -120,7 +120,7 @@ const SignIn: React.FC = () => {
                 required
                 fullWidth
                 name="password"
-                label="Mật khẩu"
+                label="Password"
                 type={showPassword === "show" ? "text" : "password"}
                 id="password"
                 autoComplete="current-password"
@@ -168,7 +168,7 @@ const SignIn: React.FC = () => {
               </Grid> */}
               <Grid item>
                 <Link href="/register" variant="body2">
-                  {"Bạn không có tài khoản? Đăng ký"}
+                  {"Don't have an account? Register now!"}
                 </Link>
               </Grid>
             </Grid>

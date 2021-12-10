@@ -12,7 +12,7 @@ const HomeProduct: React.FC<{ data: BookType }> = (props) => {
     imageURL,
   } = props.data;
 
-  const Star = parseInt(rating.toFixed(0));
+  const Star = rating? parseInt(rating.toFixed(0)) : 0;
 
   return (
     <div className="grid__column-2-4">

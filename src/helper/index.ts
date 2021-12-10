@@ -12,6 +12,8 @@ export const UPDATE_PROFILE_LINK = `http://localhost:8080/api/v1/user/profile/up
 export const POPULAR_LINK = `http://localhost:8080/api/v1/books/popular`;
 export const RECOMMENDATION_LINK = `http://localhost:8080/api/v1/books/recommendation`;
 export const SEARCH_LINK = `http://localhost:8080/api/v1/books/search`;
+export const BOOK_ADD_LINK = `http://localhost:8080/api/v1/books/add`;
+export const BOOK_UPDATE_LINK = `http://localhost:8080/api/v1/books/update`;
 
 const userconversion = (user: any) => {
   return user? {
@@ -20,7 +22,8 @@ const userconversion = (user: any) => {
     email: user.mail,
     country: user.country,
     age: user.age,
-    avatar: user.avatar
+    avatar: user.avatar,
+    isAdmin: user.admin,
   } : null;
 }
 

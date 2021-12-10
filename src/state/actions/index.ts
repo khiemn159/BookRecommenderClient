@@ -3,9 +3,6 @@ import {
   CategoryType,
   MenuItemType,
   UserType,
-  ItemOrderType,
-  OrderHistoryType,
-  CommentType,
   BookType,
 } from "../reducers/repositoriesReducer";
 import { ActionType } from "../action-types";

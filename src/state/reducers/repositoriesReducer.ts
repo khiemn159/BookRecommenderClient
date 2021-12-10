@@ -1,4 +1,3 @@
-import { User, Products } from "../../firebase";
 import { ActionType } from "../action-types";
 import { Action } from "../actions";
 
@@ -20,6 +19,7 @@ export interface UserType {
   country: string;
   age: number;
   avatar: string;
+  isAdmin: boolean;
 }
 
 export interface MenuItemType {
@@ -100,8 +100,6 @@ interface RepositoriesState {
   menuItems: MenuItemType[];
   token: string;
   user: UserType;
-  productsOrder: ItemOrderType[];
-  orderHistory: OrderHistoryType[];
   popularBook: BookType[];
   recommendationBook: BookType[];
 }
@@ -119,10 +117,9 @@ const initialState = {
     avatar: "",
     phoneNumber: "",
     country: "",
-    age: 0
+    age: 0,
+    isAdmin: false,
   },
-  productsOrder: [],
-  orderHistory: [],
   popularBook: [],
   recommendationBook: [],
 };
@@ -177,66 +174,6 @@ const reducer = (
         menuItems: action.payload[2],
       };
 
-    case ActionType.UPDATE_USER_ACCOUNT:
-      User.doc(state.user.id).update(action.payload);
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          ...action.payload,
-        },
-      };
-
-    case ActionType.ADMIN_DELETE_PRODUCT:
-      const newProducts = state.products.filter(
-        (p) => p.ProductID !== action.payload
-      );
-
-      Products.doc(action.payload).update({
-        isDeleted: true,
-      });
-
-      const newCategory = state.categories.find((el) => {
-        const newProducts = el.products.filter(
-          (p) => p.ProductID !== action.payload
-        );
-        if (newProducts.length === el.products.length) {
-          return false;
-        } else {
-          el.products = newProducts;
-          return true;
-        }
-      });
-
-      if (newCategory) {
-        const newMenuItem = state.menuItems.find((el) => {
-          const newCat = el.categories.find(
-            (cat) => cat.categoryId === newCategory.categoryId
-          );
-          if (newCat) {
-            newCat.products = newCategory.products;
-            return true;
-          } else {
-            return false;
-          }
-        });
-
-        if (newMenuItem) {
-          return {
-            ...state,
-            products: newProducts,
-            categories: state.categories,
-            menuItems: state.menuItems,
-          };
-        }
-      }
-
-      return {
-        ...state,
-        products: newProducts,
-        categories: [],
-        menuItems: [],
-      };
 
     default:
       return state;

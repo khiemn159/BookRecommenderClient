@@ -7,6 +7,7 @@ import Avatar from "@mui/material/Avatar";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
 import { useLocation } from "react-router-dom";
 import MyAccount from "./MyAccount";
+import AddItem from "./AddItem";
 
 const MyProfile: React.FC = () => {
   const user = useTypedSelector((state) => state.repositories.user);
@@ -46,6 +47,9 @@ const MyProfile: React.FC = () => {
                   {isLoggedIn &&
                     location.pathname === "/my/account" &&
                     user && <MyAccount />}
+                  {isLoggedIn &&
+                    location.pathname === "/my/addbook" &&
+                    user && <AddItem />}
                 </div>
               </div>
             </div>

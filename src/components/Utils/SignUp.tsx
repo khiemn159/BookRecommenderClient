@@ -46,14 +46,14 @@ const SignUp: React.FC = () => {
           return res.json();
         } else {
           return res.json().then((data) => {
-            let errorMessage = "username đã tồn tại";
+            let errorMessage = "username existed";
             throw new Error(errorMessage);
           });
         }
       })
       .then((data) => {
         setIsLoadding(false);
-        toast.success("Đăng ký thành công!");
+        toast.success("Register success!");
         history.push("/login");
         
       })
@@ -67,7 +67,7 @@ const SignUp: React.FC = () => {
     <>
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Đăng ký</title>
+        <title>Sign Up</title>
       </Helmet>
       {isLoadding && <Loading />}
       <Container component="main" maxWidth="xs">
@@ -87,7 +87,7 @@ const SignUp: React.FC = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Đăng ký tài khoản
+            Sign Up
           </Typography>
           <Box
             component="form"
@@ -102,7 +102,7 @@ const SignUp: React.FC = () => {
                   name="name"
                   fullWidth
                   id="name"
-                  label="Họ và tên"
+                  label="Name"
 
                   />
               </Grid>
@@ -111,7 +111,7 @@ const SignUp: React.FC = () => {
                   name="age"
                   fullWidth
                   id="age"
-                  label="Tuổi"
+                  label="Age"
                   // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   //   if (e.target.value == "") setAgeBlur(false);
 
@@ -141,7 +141,7 @@ const SignUp: React.FC = () => {
                 <TextField
                   fullWidth
                   id="country"
-                  label="Quốc gia"
+                  label="Country"
                   name="country"
                 />
               </Grid>
@@ -150,7 +150,7 @@ const SignUp: React.FC = () => {
                   required
                   fullWidth
                   id="username"
-                  label="Tên đăng nhập"
+                  label="Username"
                   name="username"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     if (e.target.value.length === 0) setUsernameInput(false);
@@ -159,7 +159,7 @@ const SignUp: React.FC = () => {
                   onBlur={() => setUsernameBlur(true)}
                   error={!usernameInput && usernameBlur}
                   helperText={
-                    !usernameInput && usernameBlur ? "Tên đăng nhập không để trống" : ""
+                    !usernameInput && usernameBlur ? "Username cant be empty" : ""
                   }
                 />
               </Grid>
@@ -168,7 +168,7 @@ const SignUp: React.FC = () => {
                   required
                   fullWidth
                   name="password"
-                  label="Mật khẩu"
+                  label="Password"
                   type="password"
                   id="password"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,7 +178,7 @@ const SignUp: React.FC = () => {
                   error={passwordInput.length < PASSWORD_LENGTH && passwordBlur}
                   helperText={
                     passwordInput.length < PASSWORD_LENGTH && passwordBlur
-                      ? "Mật khẩu phải có ít nhất " + PASSWORD_LENGTH +" ký tự"
+                      ? "Password must be at least " + PASSWORD_LENGTH +" characters"
                       : ""
                   }
                 />
@@ -188,7 +188,7 @@ const SignUp: React.FC = () => {
                   required
                   fullWidth
                   name="confirmPassword"
-                  label="Xác nhận mật khẩu"
+                  label="Confirm password"
                   type="password"
                   id="confirmPassword"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,7 +202,7 @@ const SignUp: React.FC = () => {
                   helperText={
                     (confirmPasswordInput !== passwordInput) &&
                     confirmPasswordBlur
-                      ? "Mật khẩu và Xác nhận mật khẩu không giống nhau"
+                      ? "Password and confirm do not match"
                       : ""
                   }
                 />
@@ -215,12 +215,12 @@ const SignUp: React.FC = () => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Đăng ký
+              Register
             </Button>
             <Grid container justifyContent="center">
               <Grid item>
                 <Link href="/login" variant="body2">
-                  Bạn đã có tài khoản? Đăng nhập
+                  Have an account? Login!
                 </Link>
               </Grid>
             </Grid>

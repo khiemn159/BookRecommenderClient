@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGift, faCheck } from "@fortawesome/free-solid-svg-icons";
 import Button from "@mui/material/Button";
 import styled from "styled-components";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
-import { useParams, useHistory, useLocation, Link } from "react-router-dom";
-import { BOOK_LINK } from "../../../helper";
+import { useParams, useHistory } from "react-router-dom";
+import { BOOK_LINK, BOOK_UPDATE_LINK } from "../../../helper";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import { ActionType } from "../../../state/action-types";
 import { Helmet } from "react-helmet";
 import { BookType } from "../../../state/reducers/repositoriesReducer";
 import Grid from "@mui/material/Grid";
+import { TextField } from "@mui/material";
 
 
 
@@ -180,16 +177,18 @@ const Description = styled.div`
 
 const ProductDetail: React.FC = () => {
   const {
-    isLoggedIn, token
+    isLoggedIn, token, user
   } = useTypedSelector((state) => state.repositories);
 
   const [book, setBook] = useState<BookType | null>(null);
   const [rated, setRated] = useState<Boolean>(false);
   const [yourRating, setYourRating] = useState<string>("1");
 
+  const [title, setTitle] = useState<string>("");
+  const [author, setAuthor] = useState<string>("");
+  const [published, setPublished] = useState<string>("");
+
   const history = useHistory();
-  const location = useLocation();
-  const dispatch = useDispatch();
 
   const bookID = useParams<{ id?: string }>()!.id;
 
@@ -226,6 +225,12 @@ const ProductDetail: React.FC = () => {
         .then((bookfetch) => {
           setRated(bookfetch.userRating !== null);
           setBook(bookfetch);
+          if (bookfetch) {
+            setTitle(bookfetch.title);
+            setAuthor(bookfetch.authors);
+            setPublished(bookfetch.publishedYear);
+
+          }
           
           if (rated) {
             setYourRating(bookfetch.userRating);
@@ -248,12 +253,13 @@ const ProductDetail: React.FC = () => {
         })
         .then((bookfetch) => {
           setBook(bookfetch);
+
         })
         .catch((err) => {console.log(err)});
     }
 
   
-  }, [bookID, setBook, setRated])
+  }, [bookID, setBook, setTitle, setAuthor, setPublished, setRated])
 
 
 
@@ -291,6 +297,40 @@ const ProductDetail: React.FC = () => {
     history.go(0)
   }
 
+  const onUpdateHandler = () => {
+    if (book) {
+      const fd = new FormData();
+      fd.append("id", book.id.toString());
+      fd.append("title", title);
+      fd.append("authors", author);
+      fd.append("publishedYear", published);
+      // fd.append("imageURL", altUrl);
+      fetch(
+        BOOK_UPDATE_LINK,
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+          body: fd
+        })
+        .then((res) => {
+          if (res.ok) {
+            toast("Update book success!");
+            history.go(0);
+          } else {
+            throw Error("cant update book");
+          }
+        })
+        .catch((err) => {toast.error(err)});
+
+    }
+  }
+
+  const onRemoveBookHandler = () => {
+    //TODO
+  }
+
   if (book) {
 
     content = (
@@ -319,7 +359,7 @@ const ProductDetail: React.FC = () => {
                   <span className="items">Published year: {book.publishedYear}</span>
                 </Grid>
                 <Grid item xs={12}>
-                  <span className="items">Average rating: {book.rating.toFixed(0)}/5</span>
+                  <span className="items">Average rating: {book.rating? book.rating.toFixed(0) : 0}/5</span>
                 </Grid>
               </Grid>
             </div>
@@ -367,6 +407,57 @@ const ProductDetail: React.FC = () => {
                     ) : (<></>)
                   }
                 </div>
+                {
+                  user && user.isAdmin && (
+                    <>
+                      <div className="descr">
+                        <TextField
+                          margin="normal"
+                          required
+                          id="outlined-basic"
+                          label="Book Title"
+                          style={{ width: "100%", marginBottom: "20px" }}
+                          value={title}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setTitle(e.target.value);
+                          }}
+                        />
+                        <TextField
+                          margin="normal"
+                          required
+                          id="outlined-basic"
+                          label="Book Author"
+                          style={{ width: "100%", marginBottom: "20px" }}
+                          value={author}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setAuthor(e.target.value);
+                          }}
+                        />
+                        <TextField
+                          margin="normal"
+                          required
+                          id="outlined-basic"
+                          label="Published Year"
+                          style={{ width: "100%", marginBottom: "20px" }}
+                          value={published}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setPublished(e.target.value);
+                          }}
+                        />
+                      </div>
+
+                      <div className="buttons">
+                        <div>
+                          <Button
+                            onClick={onUpdateHandler}
+                            variant="contained"
+                          >Update Book</Button> 
+                        </div>
+
+                      </div>
+                    </>
+                  )
+                }
 
               </>
             )}

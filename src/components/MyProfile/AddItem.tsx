@@ -4,23 +4,21 @@ import { useTypedSelector } from "../../hooks/useTypedSelector";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import Avatar from "@mui/material/Avatar";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
-import { UPDATE_PROFILE_LINK } from "../../helper";
+import { BOOK_ADD_LINK } from "../../helper";
 
+const altUrl = "https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png"
 
 const Input = styled("input")({
   display: "none",
 });
 
-const MyAccount: React.FC = () => {
-  const user = useTypedSelector((state) => state.repositories.user);
-  const [username, setUsername] = useState(user.id);
-  const [nameInput, setNameInput] = useState(user.name);
-  const [emailInput, setEmailInput] = useState(user.email);
-  const [countryInput, setCountryInput] = useState(user.country);
-  const [ageInput, setAgeInput] = useState(user.age);
+const AddItem: React.FC = () => {
+  const { user, token } = useTypedSelector((state) => state.repositories);
+  const [bookTitle, setBookTitle] = useState<string>("");
+  const [bookAuthor, setBookAuthor] = useState<string>("");
+  const [bookPublishYear, setBookPublishYear] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<any>(null);
   const [url, setUrl] = useState(user.avatar);
@@ -29,15 +27,6 @@ const MyAccount: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  useEffect(() => {
-    setUsername(user.id);
-    setNameInput(user.name);
-    setEmailInput(user.email);
-    setCountryInput(user.country);
-    setAgeInput(user.age);
-    
-    setUrl(user.avatar);
-  }, [user.name, user.avatar]);
 
   const handleChange = (e: any) => {
     if (e.target.files[0]) {
@@ -46,48 +35,34 @@ const MyAccount: React.FC = () => {
   };
 
 
-  const {token} = useTypedSelector((state) => state.repositories);
 
-  const onUpdateUser = () => {
+  const onCreateBook = () => {
     const fd = new FormData();
-    if (nameInput) fd.append("name", nameInput);
-    if (emailInput) fd.append("mail", emailInput);
-    if (countryInput) fd.append("country", countryInput);
-    if (ageInput) fd.append("age", ageInput.toString());
-
-    setIsLoading(true);
+    fd.append("title", bookTitle);
+    fd.append("authors", bookAuthor);
+    fd.append("publishedYear", bookPublishYear);
+    fd.append("imageURL", altUrl);
     fetch(
-      UPDATE_PROFILE_LINK,
+      BOOK_ADD_LINK,
       {
         method: "POST",
         headers: {
           Authorization: "Bearer " + token,
         },
-        body: fd,
-      }
-    )
+        body: fd
+      })
       .then((res) => {
         if (res.ok) {
-          return res.json();
+          toast("Add book success!");
         } else {
-          return res.json().then((data) => {
-            let errorMessage = "Something went wrong, error saving!";
-            throw new Error(errorMessage);
-          });
+          throw Error("cant add book");
         }
       })
-      .then((data) => {
-        setIsLoading(false);
-        toast.success("Saving success!");
-        
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        toast.error(err.message);
-      });
-  };
+      .catch((err) => {toast.error(err)});
+    // toast("Add book success!");
+  }
 
-  return user.id ? (
+  return user.isAdmin ? (
     <div
       style={{
         display: "flex",
@@ -120,11 +95,7 @@ const MyAccount: React.FC = () => {
               <CircularProgress color="secondary" />
             </Stack>
           ) : (
-            <Avatar
-              alt={user.name}
-              src={url}
-              sx={{ width: 180, height: 180 }}
-            />
+            <img src={altUrl} alt="Book Cover" style={{ width: "100%" }} />
           )}
         </div>
 
@@ -137,8 +108,8 @@ const MyAccount: React.FC = () => {
               type="file"
               onChange={handleChange}
             />
-            <Button variant="outlined" component="span">
-              Chọn ảnh
+            <Button style={{marginTop: 20}} variant="outlined" component="span">
+              Add Cover
             </Button>
           </label>
         </Stack>
@@ -146,62 +117,44 @@ const MyAccount: React.FC = () => {
       <div style={{ width: "50%", padding: "16px" }}>
         <TextField
           margin="normal"
-          disabled
+          required
           id="outlined-basic"
-          label="Tên đăng nhập"
+          label="Book Title"
           style={{ width: "100%", marginBottom: "20px" }}
-          value={username}
-        />
-        <TextField
-          margin="normal"
-          id="outlined-basic"
-          label="Họ và tên đệm"
-          style={{ width: "100%", marginBottom: "20px" }}
-          value={nameInput}
+          value={bookTitle}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setNameInput(e.target.value);
+            setBookTitle(e.target.value);
           }}
         />
         <TextField
           margin="normal"
           id="outlined-basic"
-          label="Email"
+          label="Author"
           style={{ width: "100%", marginBottom: "20px" }}
-          value={emailInput}
+          value={bookAuthor}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setEmailInput(e.target.value);
+            setBookAuthor(e.target.value);
           }}
         />
         <TextField
           margin="normal"
           id="outlined-basic"
-          label="Tuổi"
+          label="Publish Year"
           style={{ width: "100%", marginBottom: "20px" }}
-          value={ageInput}
+          value={bookPublishYear}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.target.value) setAgeInput(parseFloat(e.target.value));
-            else setAgeInput(0);
+            setBookPublishYear(e.target.value);
           }}
         />
-
-        <TextField
-          margin="normal"
-          id="outlined-basic"
-          label="Quốc gia"
-          style={{ width: "100%", marginBottom: "20px" }}
-          value={countryInput}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setCountryInput(e.target.value);
-          }}
-        />
+        
 
         <Button
           variant="contained"
           component="span"
-          onClick={onUpdateUser}
+          onClick={onCreateBook}
 
         >
-          Save
+          Add Book
         </Button>
       </div>
 
@@ -211,4 +164,4 @@ const MyAccount: React.FC = () => {
   );
 };
 
-export default MyAccount;
+export default AddItem;
