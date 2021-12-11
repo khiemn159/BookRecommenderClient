@@ -265,6 +265,7 @@ const ProductDetail: React.FC = () => {
 
   const sendRating = (rate: string) => {
     const fd = new FormData();
+    console.log(rate);
     fd.append("rating", rate);
     return fetch(
       BOOK_LINK + bookID + "/rating",
@@ -277,6 +278,7 @@ const ProductDetail: React.FC = () => {
       })
       .then((res) => {
         if (res.ok) {
+          if (rate === "-1") return res;
           return res.json();
         } else {
           throw Error("Cant change rating!");
@@ -294,7 +296,6 @@ const ProductDetail: React.FC = () => {
   
   const onRemoveHandler = () => {
     sendRating("-1");
-    history.go(0)
   }
 
   const onUpdateHandler = () => {
@@ -341,7 +342,8 @@ const ProductDetail: React.FC = () => {
             <title>{book.title ?? "Book"}</title>
           </Helmet>
           
-          <div style={{ width: "300px", marginLeft:"50px", marginRight:"50px", border: "1px solid #ccc" }}>
+          <div style={{ width: "300px", marginLeft:"50px", marginRight:"50px"}}>
+          {/* <div style={{ width: "300px", marginLeft:"50px", marginRight:"50px", border: "1px solid #ccc" }}> */}
             <img src={book.imageURL} alt="Book Cover" style={{ width: "100%" }} />
           </div>
           <Description>
@@ -359,7 +361,7 @@ const ProductDetail: React.FC = () => {
                   <span className="items">Published year: {book.publishedYear}</span>
                 </Grid>
                 <Grid item xs={12}>
-                  <span className="items">Average rating: {book.rating? book.rating.toFixed(0) : 0}/5</span>
+                  <span className="items">Average rating: {book.rating? book.rating.toFixed(2) : 0}/5</span>
                 </Grid>
               </Grid>
             </div>

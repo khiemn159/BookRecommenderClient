@@ -44,14 +44,9 @@ const HomeProduct: React.FC<{ data: BookType }> = (props) => {
             ))}
           </div>
           {/* <span style={{ fontSize: "0.8rem", marginLeft: "8px" }}>
-            ({Sold})
+            ({rating? rating : 0})
           </span> */}
         </div>
-
-        {/* <div className="home-product-item__origin">
-          <span className="home-product-item__brand"> {Producer} </span>
-          <span className="home-product-item__origin-name">{Source}</span>
-        </div> */}
 
       </Link>
     </div>

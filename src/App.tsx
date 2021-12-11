@@ -124,9 +124,7 @@ function App() {
             path={[
               "/my/account",
               "/my/addbook",
-              "/my/purchase",
-              "/my/order-waiting",
-              "/my/new-password",
+              "/my/history",
             ]}
           >
             {isLoggedIn && <MyProfile />}

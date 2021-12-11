@@ -14,6 +14,7 @@ export const RECOMMENDATION_LINK = `http://localhost:8080/api/v1/books/recommend
 export const SEARCH_LINK = `http://localhost:8080/api/v1/books/search`;
 export const BOOK_ADD_LINK = `http://localhost:8080/api/v1/books/add`;
 export const BOOK_UPDATE_LINK = `http://localhost:8080/api/v1/books/update`;
+export const BOOK_HISTORY_LINK = `http://localhost:8080/api/v1/books/history`;
 
 const userconversion = (user: any) => {
   return user? {

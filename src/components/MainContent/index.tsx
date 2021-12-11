@@ -55,7 +55,7 @@ const MainContent: React.FC = () => {
     <div className="app__container">
       <Helmet>
         <meta charSet="utf-8" />
-        <title>{menuItem ? menuItem.name : "Sản phẩm"}</title>
+        <title>{menuItemID ? menuItemID : "Books"}</title>
       </Helmet>
       <div className="grid">
         <div className="grid__row app-content">

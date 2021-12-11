@@ -46,7 +46,7 @@ const HeaderOptions: React.FC = () => {
       )}
 
       {/***********************************************************/}
-      {isLoggedIn && (
+      {isLoggedIn && user && (
         <div
           className={`link list__category ${
             user.email === "admin@gmail.com" ? "" : "separate"
@@ -62,6 +62,11 @@ const HeaderOptions: React.FC = () => {
             <li className="select-input__item">
               <Link to="/my/account" className="select-input__link">
                 My Account
+              </Link>
+            </li>
+            <li className="select-input__item">
+              <Link to="/my/history" className="select-input__link">
+                Rating History
               </Link>
             </li>
             {
